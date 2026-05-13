@@ -147,9 +147,9 @@
       will-change: transform, opacity;
     }
     .hero__slide:nth-child(1) { animation-delay:   0s; }
-    .hero__slide:nth-child(2) { animation-delay:  -5s; }
+    .hero__slide:nth-child(2) { animation-delay: -15s; }
     .hero__slide:nth-child(3) { animation-delay: -10s; }
-    .hero__slide:nth-child(4) { animation-delay: -15s; }
+    .hero__slide:nth-child(4) { animation-delay:  -5s; }
     @keyframes heroSlide {
       0%   { opacity: 1; transform: scale(1.06) translateY(0); }
       20%  { opacity: 1; transform: scale(1.0)  translateY(0); }
@@ -169,12 +169,13 @@
     }
     .hero__content {
       position: absolute;
-      right: 9%;
-      bottom: 14%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
-      gap: 32px;
+      align-items: center;
+      gap: 24px;
       animation: heroFadeIn 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s both;
     }
     @keyframes heroFadeIn {
@@ -185,10 +186,9 @@
       font-size: clamp(2.1rem, 3.6vw, 3.4rem);
       font-weight: 200;
       letter-spacing: 0.32em;
-      color: #fff;
+      color: rgb(250, 217, 243);
       writing-mode: vertical-rl;
       text-orientation: upright;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.18);
       line-height: 2.1;
     }
     .hero__sub {
@@ -259,6 +259,7 @@
     .top-about-txt h2.ttl-L span { display: inline; }
     .top-about-btn {
       margin-top: 48px;
+      text-align: center;
     }
     .top-about-btn a.btn-normal {
       display: inline-flex;
@@ -786,10 +787,10 @@
 <!-- ========== HERO ========== -->
 <section class="hero" aria-label="メインビジュアル">
   <div class="hero__slides">
-    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img04.png');"></div>
     <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img02.png');"></div>
-    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img05.png');"></div>
     <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img03.png');"></div>
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img04.png');"></div>
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img05.png');"></div>
   </div>
   <div class="hero__overlay"></div>
   <div class="hero__content">
@@ -1074,18 +1075,23 @@
     header.classList.toggle('is-scrolled', window.scrollY > 40);
   }, { passive: true });
 
-  /* --- Parallax --- */
+  /* --- Parallax (rAF で震え防止) --- */
   const parallaxEls = document.querySelectorAll('.panel__bg, .cta-banner__bg');
+  let rafId = null;
 
   const runParallax = () => {
+    rafId = null;
+    const vh = window.innerHeight;
     parallaxEls.forEach(el => {
       const rect = el.parentElement.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-      const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-      el.style.transform = `translateY(${center * 0.14}px)`;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const center = rect.top + rect.height / 2 - vh / 2;
+      el.style.transform = `translateY(${Math.round(center * 0.14)}px)`;
     });
   };
-  window.addEventListener('scroll', runParallax, { passive: true });
+  window.addEventListener('scroll', () => {
+    if (!rafId) rafId = requestAnimationFrame(runParallax);
+  }, { passive: true });
   runParallax();
 
   /* --- Reveal on scroll --- */
