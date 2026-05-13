@@ -3,38 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    #pw-gate {
-      position: fixed; inset: 0; z-index: 99999;
-      background: #3a2e24;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      font-family: 'Noto Serif JP', '游明朝', serif;
-    }
-    #pw-gate h1 {
-      color: #e8e0d0; font-size: 1.3rem; font-weight: 300;
-      letter-spacing: 0.3em; margin-bottom: 40px;
-    }
-    #pw-gate input {
-      background: transparent; border: 1px solid rgba(184,171,138,0.5);
-      color: #e8e0d0; font-size: 1rem; letter-spacing: 0.2em;
-      padding: 12px 24px; width: 260px; text-align: center; outline: none;
-      font-family: inherit;
-    }
-    #pw-gate input::placeholder { color: rgba(232,224,208,0.35); }
-    #pw-gate button {
-      margin-top: 20px; background: transparent;
-      border: 1px solid #b8ab8a; color: #b8ab8a;
-      font-family: inherit; font-size: 0.75rem; letter-spacing: 0.25em;
-      padding: 10px 36px; cursor: pointer; transition: background 0.3s;
-    }
-    #pw-gate button:hover { background: rgba(184,171,138,0.12); }
-    #pw-gate .pw-error {
-      color: #c0a080; font-size: 0.75rem; letter-spacing: 0.15em;
-      margin-top: 14px; opacity: 0; transition: opacity 0.3s;
-    }
-    #pw-gate .pw-error.show { opacity: 1; }
-  </style>
   <title>平等大慧会 | デザイン案</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -163,19 +131,31 @@
       min-height: 600px;
       overflow: hidden;
     }
-    .hero__bg {
+    .hero__slides {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .hero__slide {
       position: absolute;
       inset: -8%;
-      background-image: url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img04.png');
       background-size: cover;
       background-position: center 35%;
-      animation: heroPan 12s ease-out forwards;
-      will-change: transform;
       filter: saturate(0.88) brightness(0.97);
+      opacity: 0;
+      animation: heroSlide 20s ease-in-out infinite;
+      will-change: transform, opacity;
     }
-    @keyframes heroPan {
-      from { transform: scale(1.08) translateY(0); }
-      to   { transform: scale(1.0)  translateY(0); }
+    .hero__slide:nth-child(1) { animation-delay:   0s; }
+    .hero__slide:nth-child(2) { animation-delay:  -5s; }
+    .hero__slide:nth-child(3) { animation-delay: -10s; }
+    .hero__slide:nth-child(4) { animation-delay: -15s; }
+    @keyframes heroSlide {
+      0%   { opacity: 1; transform: scale(1.06) translateY(0); }
+      20%  { opacity: 1; transform: scale(1.0)  translateY(0); }
+      25%  { opacity: 0; transform: scale(1.0)  translateY(0); }
+      95%  { opacity: 0; transform: scale(1.06) translateY(0); }
+      100% { opacity: 1; transform: scale(1.06) translateY(0); }
     }
     .hero__overlay {
       position: absolute;
@@ -345,7 +325,7 @@
       margin-bottom: 22px;
     }
     .panel__title {
-      font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+      font-size: clamp(1.2rem, 1.85vw, 1.6rem);
       font-weight: 300;
       letter-spacing: 0.1em;
       line-height: 2.0;
@@ -805,7 +785,12 @@
 
 <!-- ========== HERO ========== -->
 <section class="hero" aria-label="メインビジュアル">
-  <div class="hero__bg" id="hero-bg"></div>
+  <div class="hero__slides">
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img04.png');"></div>
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img02.png');"></div>
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img05.png');"></div>
+    <div class="hero__slide" style="background-image:url('https://kiwi.gr-w.jp/marufuku/wp-content/themes/daieikai/top/images/top_mv_img03.png');"></div>
+  </div>
   <div class="hero__overlay"></div>
   <div class="hero__content">
     <h1 class="hero__title">四季と共に<br>お出迎え。</h1>
@@ -1090,14 +1075,9 @@
   }, { passive: true });
 
   /* --- Parallax --- */
-  const heroBg = document.getElementById('hero-bg');
   const parallaxEls = document.querySelectorAll('.panel__bg, .cta-banner__bg');
 
   const runParallax = () => {
-    const scrollY = window.scrollY;
-    if (scrollY < window.innerHeight * 1.5) {
-      heroBg.style.transform = `translateY(${scrollY * 0.28}px)`;
-    }
     parallaxEls.forEach(el => {
       const rect = el.parentElement.getBoundingClientRect();
       if (rect.bottom < 0 || rect.top > window.innerHeight) return;
@@ -1119,37 +1099,6 @@
     { threshold: 0.10, rootMargin: '0px 0px -40px 0px' }
   );
   document.querySelectorAll('.js-reveal').forEach(el => revealObserver.observe(el));
-</script>
-
-<!-- PASSWORD GATE -->
-<div id="pw-gate">
-  <h1>平等大慧会　デザイン案</h1>
-  <input type="password" id="pw-input" placeholder="パスワードを入力" autocomplete="off">
-  <button onclick="checkPw()">enter</button>
-  <p class="pw-error" id="pw-error">パスワードが違います</p>
-</div>
-<script>
-  (function() {
-    if (sessionStorage.getItem('daieikai_auth') === '1') {
-      document.getElementById('pw-gate').style.display = 'none';
-    }
-    document.getElementById('pw-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') checkPw();
-    });
-  })();
-  function checkPw() {
-    const v = document.getElementById('pw-input').value;
-    const h = Array.from(v).reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
-    if (h === -905649879) {
-      sessionStorage.setItem('daieikai_auth', '1');
-      document.getElementById('pw-gate').style.display = 'none';
-    } else {
-      const err = document.getElementById('pw-error');
-      err.classList.add('show');
-      setTimeout(() => err.classList.remove('show'), 2000);
-      document.getElementById('pw-input').value = '';
-    }
-  }
 </script>
 
 </body>
